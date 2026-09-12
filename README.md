@@ -18,6 +18,15 @@ code and running scripts. This project consolidates all five into one
 Django web app: pick a task from a dashboard, upload a scan or image, get a
 result back, with real background-job processing behind it.
 
+**Planned 6th feature (not yet ported):** GI-tract segmentation (FPN +
+EfficientNet-B3 backbone), consolidated in from the archived
+[UG-GI-Track-Segmentation](../../portfolio-archived-repos/UG-GI-Track-Segmentation/)
+repo. That repo was a standalone Kaggle notebook, not a Django app, so unlike
+the 5 features above it still needs a real `gi_tract_segmentation` app
+(model, views, templates, migrations, tests) built to match this suite's
+existing pattern before it shows up in the task dashboard. Tracked in
+`docs/architecture.md` and `docs/evaluation.md`.
+
 ## 2. Architecture
 
 ```text

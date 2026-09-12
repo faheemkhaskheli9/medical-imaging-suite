@@ -19,6 +19,7 @@ not Dice/IoU/distance-to-ground-truth.
 | `xray_segmentation` | Dice, IoU (training-time only) | Synthetic bright-lesion images |
 | `roi_keypoints` | Precision/Recall/mAP (training-time, via Ultralytics) | Synthetic bright-rectangle images |
 | `breast_tumor_segmentation` | Dice, IoU (training-time only) | Synthetic sphere-tumor volumes |
+| `gi_tract_segmentation` (planned, not yet ported) | Dice, IoU (training-time only, expected) | UW-Madison GI Tract dataset, consolidated from archived `UG-GI-Track-Segmentation` repo -- see `docs/architecture.md` |
 
 ## Result Log
 

@@ -49,6 +49,33 @@ Browser --> Django views/templates --> Job (row created, status=queued)
   server-rendered templates, no JS build step (one small inline poll script
   on the job-status page).
 
+## Planned 6th feature: GI-tract segmentation (not yet ported)
+
+Consolidated in from the archived `UG-GI-Track-Segmentation` repo (FPN
+architecture, EfficientNet-B3 backbone, UW-Madison GI Tract Image
+Segmentation dataset). Unlike the other 5 features, the source was a
+standalone Kaggle notebook, not a scaffold repo with a matching app
+structure -- so porting it means following the same "new app, subclass,
+register" recipe above from scratch rather than lifting an existing
+`model.py`/`task.py` pair:
+
+1. New `gi_tract_segmentation/` app: `model.py` (FPN + EfficientNet-B3,
+   multi-class mask output for the 3 GI-tract organ classes, trained on
+   synthetic data like the other 5 features per "Why every feature trains
+   its own small model on synthetic data" below).
+2. `task.py`: a `BaseImagingTask` subclass wiring the model to
+   `imaging_core`'s existing 2D image I/O + overlay-PNG visualization (same
+   path `xray_segmentation`/`roi_keypoints` already use -- no new
+   `imaging_core` code expected).
+3. Self-register via `apps.py::ready()`, add to `INSTALLED_APPS` --
+   `jobs` needs no changes.
+4. Migrations + a test mirroring one of the existing feature apps' test
+   suites.
+
+Until this lands, the suite's status stays "5 of 6 features implemented";
+don't count GI-tract segmentation as done in `docs/evaluation.md` or drop
+the "planned" wording from the README.
+
 ## Why a registry instead of one view per feature
 
 Mirrors the `BaseStrategy` / `@register_strategy("key")` pattern from a
