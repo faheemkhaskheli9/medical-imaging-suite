@@ -1,0 +1,52 @@
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 2"
+    ports:
+      - "8000:8000"
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-change-me-in-production}
+      DJANGO_DEBUG: "False"
+      DJANGO_ALLOWED_HOSTS: "*"
+      CELERY_BROKER_URL: redis://redis:6379/0
+      # sqlite by default (fine for a single-node demo); point this at a
+      # Postgres URL instead for a real multi-container deployment, since
+      # sqlite has no real concurrent-writer story across web+worker.
+      DATABASE_URL: sqlite:////app/data/db.sqlite3
+    volumes:
+      - app_data:/app/data
+      - media_data:/app/media
+      - checkpoint_data:/app/var/checkpoints
+    depends_on:
+      - redis
+
+  worker:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    command: celery -A config worker --loglevel=info
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-change-me-in-production}
+      DJANGO_DEBUG: "False"
+      CELERY_BROKER_URL: redis://redis:6379/0
+      DATABASE_URL: sqlite:////app/data/db.sqlite3
+    volumes:
+      - app_data:/app/data
+      - media_data:/app/media
+      - checkpoint_data:/app/var/checkpoints
+    depends_on:
+      - redis
+      - web
+
+volumes:
+  app_data:
+  media_data:
+  checkpoint_data:

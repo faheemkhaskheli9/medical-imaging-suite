@@ -1,0 +1,35 @@
+[project]
+name = "medical-imaging-suite"
+version = "0.1.0"
+description = "Multi-feature medical imaging web app: CT segmentation, CT keypoint detection, X-ray segmentation, 2D ROI/keypoint detection, and breast tumor segmentation, run from one Django UI with Celery background jobs."
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.2",
+    "numpy>=1.26",
+    "scipy>=1.12",
+    "matplotlib>=3.8",
+    "nibabel>=5.2",
+    "pydicom>=2.4",
+    "opencv-python-headless>=4.9",
+    "Pillow>=10.0",
+    "ultralytics>=8.2",
+    "PyYAML>=6.0",
+    "Django>=5.2,<5.3",
+    "celery>=5.4",
+    "redis>=5.0",
+    "gunicorn>=22.0",
+    "python-decouple>=3.8",
+    "dj-database-url>=2.1",
+    "django-widget-tweaks>=1.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-django>=4.8",
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+python_files = ["test_*.py", "tests.py"]
+pythonpath = ["."]

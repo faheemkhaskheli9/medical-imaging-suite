@@ -1,0 +1,17 @@
+# Manifest for breast_tumor_segmentation's dataset_download.py /
+# `python manage.py download_breast_mri_dataset --config configs/breast_tumor_data.yaml`
+#
+# `mode: synthetic` (default here) generates a small local NIfTI dataset,
+# no network required -- safe for CI/demo. Switch to `mode: http` with a
+# `files:` list (url + sha256 per entry) to acquire a real public dataset.
+dataset:
+  name: breast-mri-demo
+  version: "1"
+  root: data/raw/breast_mri
+  license: CC0 (synthetic)
+  source_url: unspecified
+mode: synthetic
+synthetic:
+  num_cases: 6
+  shape: [32, 32, 24]
+  seed: 42

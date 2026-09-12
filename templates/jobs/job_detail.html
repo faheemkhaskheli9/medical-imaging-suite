@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Job #{{ job.id }} &middot; Medical Imaging Suite{% endblock %}
+{% block content %}
+  <div class="section-heading">
+    <h1>Job #{{ job.id }}{% if task %} &mdash; {{ task.label }}{% else %} &mdash; {{ job.task_key }}{% endif %}</h1>
+    <span class="chip chip-{{ job.status }}" id="job-status-chip">{{ job.get_status_display }}</span>
+  </div>
+
+  <div class="panel">
+    <dl class="stat-grid">
+      <div class="stat"><dt>Submitted</dt><dd>{{ job.created_at }}</dd></div>
+      <div class="stat"><dt>Started</dt><dd>{{ job.started_at|default:"&mdash;" }}</dd></div>
+      <div class="stat"><dt>Finished</dt><dd>{{ job.finished_at|default:"&mdash;" }}</dd></div>
+    </dl>
+  </div>
+
+  {% if job.status == "queued" or job.status == "running" %}
+    <div class="panel" id="job-pending-panel">
+      <p>This job is {{ job.status }}. This page refreshes automatically.</p>
+    </div>
+    <script>
+      (function poll() {
+        fetch("{% url 'jobs:job_status_json' job.id %}")
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.is_finished) {
+              window.location.reload();
+            } else {
+              setTimeout(poll, 2000);
+            }
+          })
+          .catch(() => setTimeout(poll, 5000));
+      })();
+    </script>
+  {% elif job.status == "failed" %}
+    <div class="panel">
+      <h2 class="panel-title">Error</h2>
+      <p class="notice error">{{ job.error }}</p>
+    </div>
+  {% elif job.status == "done" %}
+    <div class="panel">
+      <h2 class="panel-title">Result</h2>
+      {% if job.result.summary %}<p>{{ job.result.summary }}</p>{% endif %}
+      {% if job.result.metrics %}
+        <dl class="stat-grid">
+          {% for key, value in job.result.metrics.items %}
+            <div class="stat"><dt>{{ key }}</dt><dd>{{ value }}</dd></div>
+          {% endfor %}
+        </dl>
+      {% endif %}
+    </div>
+    {% if job.visualization_urls %}
+      <div class="panel">
+        <h2 class="panel-title">Visualizations</h2>
+        <div class="viz-grid">
+          {% for url in job.visualization_urls %}
+            <img src="{{ url }}" alt="Result visualization" class="viz-image">
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  {% endif %}
+{% endblock %}

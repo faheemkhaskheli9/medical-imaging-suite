@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}My Jobs &middot; Medical Imaging Suite{% endblock %}
+{% block content %}
+  <div class="section-heading">
+    <h1>{% if show_all %}All jobs{% else %}My jobs{% endif %}</h1>
+    {% if user.is_staff %}
+      <p class="muted">
+        {% if show_all %}<a href="?">Show only my jobs</a>{% else %}<a href="?all=1">Show every user's jobs (staff)</a>{% endif %}
+      </p>
+    {% endif %}
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Job</th>
+        <th>Task</th>
+        {% if show_all %}<th>Owner</th>{% endif %}
+        <th>Status</th>
+        <th>Submitted</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for job in page %}
+        <tr>
+          <td><a href="{{ job.get_absolute_url }}">#{{ job.id }}</a></td>
+          <td>{{ job.task_key }}</td>
+          {% if show_all %}<td>{{ job.owner.username }}</td>{% endif %}
+          <td><span class="chip chip-{{ job.status }}">{{ job.get_status_display }}</span></td>
+          <td>{{ job.created_at }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="empty">No jobs yet &mdash; pick a <a href="{% url 'jobs:dashboard' %}">task</a> to get started.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% include "jobs/_pagination.html" with page=page query=query %}
+{% endblock %}

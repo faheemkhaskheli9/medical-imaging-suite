@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block title %}Sign up &middot; Medical Imaging Suite{% endblock %}
+{% block content %}
+  <div class="panel narrow">
+    <h1 class="panel-title">Create an account</h1>
+    <form method="post" class="upload-form">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="field-row">
+          {{ field.label_tag }}
+          {% render_field field %}
+          {% if field.help_text %}<p class="muted">{{ field.help_text }}</p>{% endif %}
+          {% for error in field.errors %}<p class="errorlist">{{ error }}</p>{% endfor %}
+        </div>
+      {% endfor %}
+      <button type="submit" class="button-primary">Sign up</button>
+    </form>
+    <p class="muted">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+  </div>
+{% endblock %}

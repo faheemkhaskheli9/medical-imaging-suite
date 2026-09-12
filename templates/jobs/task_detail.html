@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block title %}{{ task.label }} &middot; Medical Imaging Suite{% endblock %}
+{% block content %}
+  <div class="section-heading">
+    <h1>{{ task.label }}</h1>
+    <p class="muted">{{ task.description }}</p>
+    <span class="badge">{{ task.input_kind_label }}</span>
+  </div>
+
+  <div class="panel">
+    <h2 class="panel-title">Run this task</h2>
+    {% if user.is_authenticated %}
+      <form method="post" enctype="multipart/form-data" class="upload-form">
+        {% csrf_token %}
+        <div class="field-row">
+          {{ form.input_file.label_tag }}
+          {% render_field form.input_file %}
+          {% if form.input_file.help_text %}<p class="muted">{{ form.input_file.help_text }}</p>{% endif %}
+          {% for error in form.input_file.errors %}<p class="errorlist">{{ error }}</p>{% endfor %}
+        </div>
+        <button type="submit" class="button-primary">Run {{ task.label }}</button>
+      </form>
+    {% else %}
+      <p><a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to run this task.</p>
+    {% endif %}
+  </div>
+
+  {% if recent_jobs %}
+    <div class="panel">
+      <h2 class="panel-title">Your recent runs</h2>
+      <ul class="job-mini-list">
+        {% for job in recent_jobs %}
+          <li>
+            <a href="{{ job.get_absolute_url }}">Job #{{ job.id }}</a>
+            <span class="chip chip-{{ job.status }}">{{ job.get_status_display }}</span>
+            <span class="muted">{{ job.created_at }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,27 @@
+# CPU-only stack by default. For a CUDA build of torch, install per
+# https://pytorch.org/get-started/locally/ instead of the line below.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.2
+numpy>=1.26
+scipy>=1.12
+matplotlib>=3.8
+nibabel>=5.2          # NIfTI I/O (ct_segmentation, ct_keypoints, breast_tumor_segmentation)
+pydicom>=2.4           # DICOM series I/O (ct_keypoints, shared imaging_core loader)
+opencv-python-headless>=4.9   # 2D image I/O/augmentation (xray_segmentation, roi_keypoints)
+Pillow>=10.0
+ultralytics>=8.2       # YOLO ROI detection (roi_keypoints)
+PyYAML>=6.0
+
+# Web app
+Django>=5.2,<5.3
+celery>=5.4
+redis>=5.0             # celery broker/result backend in docker-compose; not required
+                        # for CELERY_TASK_ALWAYS_EAGER dev/test mode
+gunicorn>=22.0
+python-decouple>=3.8   # .env loading for settings.py
+dj-database-url>=2.1    # parses DATABASE_URL when set (Postgres in docker-compose)
+django-widget-tweaks>=1.5   # template form-field styling without a JS build step
+
+# dev / test
+pytest>=8.0
+pytest-django>=4.8

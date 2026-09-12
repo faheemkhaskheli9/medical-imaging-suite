@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block title %}Log in &middot; Medical Imaging Suite{% endblock %}
+{% block content %}
+  <div class="panel narrow">
+    <h1 class="panel-title">Log in</h1>
+    <form method="post" class="upload-form">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="field-row">
+          {{ field.label_tag }}
+          {% render_field field %}
+          {% for error in field.errors %}<p class="errorlist">{{ error }}</p>{% endfor %}
+        </div>
+      {% endfor %}
+      {% for error in form.non_field_errors %}<p class="errorlist">{{ error }}</p>{% endfor %}
+      <input type="hidden" name="next" value="{{ next }}">
+      <button type="submit" class="button-primary">Log in</button>
+    </form>
+    <p class="muted">No account? <a href="{% url 'signup' %}">Sign up</a></p>
+  </div>
+{% endblock %}

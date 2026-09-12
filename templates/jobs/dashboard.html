@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Tasks &middot; Medical Imaging Suite{% endblock %}
+{% block content %}
+  <div class="section-heading">
+    <h1>Imaging tasks</h1>
+    <p class="muted">Pick a task, upload a scan or image, and run it. Each job runs in the background and you can come back to it from <a href="{% url 'jobs:job_list' %}">My Jobs</a>.</p>
+  </div>
+
+  <div class="card-grid">
+    {% for task in tasks %}
+      <a class="panel task-card" href="{% url 'jobs:task_detail' task.key %}">
+        <span class="badge">{{ task.input_kind_label }}</span>
+        <h2 class="panel-title">{{ task.label }}</h2>
+        <p>{{ task.description }}</p>
+      </a>
+    {% empty %}
+      <p class="empty">No imaging tasks are registered yet.</p>
+    {% endfor %}
+  </div>
+{% endblock %}
